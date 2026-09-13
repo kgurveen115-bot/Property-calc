@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropCalc Pro - Real Estate Investment & Planning Suite</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Dashboards -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+    </style>
+</head>
+<body class="h-full bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200">
+
+    <div id="app" class="flex h-full w-full overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 transition-transform duration-300 -translate-x-full lg:translate-x-0 lg:static lg:inset-auto">
+            <!-- Brand Header -->
+            <div class="flex h-16 items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 text-white shadow-lg shadow-brand-500/30">
+                        <i class="fa-solid fa-city text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-lg font-bold tracking-tight">PropCalc <span class="text-brand-600">Pro</span></span>
+                        <span class="block text-xs text-slate-500 dark:text-slate-400">Investment & Planning Suite</span>
+                    </div>
+                </div>
+                <button onclick="toggleSidebar()" class="lg:hidden text-slate-500 hover:text-slate-700 dark:text-slate-400">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Nav Links -->
+            <nav class="flex-1 space-y-1 px-4 py-6 overflow-y-auto">
+                <button onclick="switchTab('dashboard')" class="nav-btn flex w-full items-center space-x-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400" data-target="dashboard">
+                    <i class="fa-solid fa-chart-pie w-5"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="switchTab('projects')" class="nav-btn flex w-full items-center space-x-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800/60" data-target="projects">
+                    <i class="fa-solid fa-folder-open w-5"></i>
+                    <span>Project Manager</span>
+                    <span id="project-badge" class="ml-auto rounded-full bg-slate-200 px-2 py-0.5 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300">0</span>
+                </button>
+                <div class="pt-4 pb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Calculators</div>
+                <button onclick="switchTab('plot-calc')" class="nav-btn flex w-full items-center space-x-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800/60" data-target="plot-calc">
+                    <i class="fa-solid fa-ruler-combined w-5"></i>
+                    <span>Plot Calculator</span>
+                </button>
+                <button onclick="switchTab('construction-calc')" class="nav-btn flex w-full items-center space-x-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800/60" data-target="construction-calc">
+                    <i class="fa-solid fa-hard-hat w-5"></i>
+                    <span>Construction Cost</span>
+                </button>
+                <button onclick="switchTab('investment-calc')" class="nav-btn flex w-full items-center space-x-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800/60" data-target="investment-calc">
+                    <i class="fa-solid fa-chart-line w-5"></i>
+                    <span>Property Investment</span>
+                </button>
+                <button onclick="switchTab('rental-calc')" class="nav-btn flex w-full items-center space-x-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800/60" data-target="rental-calc">
+                    <i class="fa-solid fa-house-chimney-user w-5"></i>
+                    <span>Rental Yield</span>
+                </button>
+            </nav>
+
+            <!-- Footer Profile / Theme Switcher -->
+            <div class="border-t border-slate-200 p-4 dark:border-slate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="h-9 w-9 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-700 dark:text-slate-300 text-sm">
+                        RE
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold">Real Estate Investor</p>
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400">Pro Edition v2.6</p>
+                    </div>
+                </div>
+                <button onclick="toggleDarkMode()" class="h-9 w-9 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Top Header -->
+            <header class="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6 dark:border-slate-800 dark:bg-slate-900 shrink-0">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="lg:hidden text-slate-600 hover:text-slate-900 dark:text-slate-300">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                    <h1 id="page-title" class="text-lg font-bold text-slate-800 dark:text-white">Dashboard Overview</h1>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="openProjectModal()" class="inline-flex items-center space-x-2 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 hover:bg-brand-500 transition-all">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>New Project</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Scrollable Content Area -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+                
+                <!-- 1. DASHBOARD TAB -->
+                <div id="tab-dashboard" class="tab-content active space-y-6">
+                    <!-- Summary Cards -->
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                            <div class="flex items-center justify-between">
+                                <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Projects</p>
+                                <div class="rounded-xl bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                                    <i class="fa-solid fa-folder-tree text-lg"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-baseline space-x-2">
+                                <h3 id="stat-projects" class="text-2xl font-bold text-slate-900 dark:text-white">0</h3>
+                                <span class="text-xs text-slate-500 dark:text-slate-400">Active portfolios</span>
+                            </div>
+                        </div>
+
+                        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                            <div class="flex items-center justify-between">
+                                <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Investment</p>
+                                <div class="rounded-xl bg-amber-50 p-3 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
+                                    <i class="fa-solid fa-wallet text-lg"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-baseline space-x-2">
+                                <h3 id="stat-investment" class="text-2xl font-bold text-slate-900 dark:text-white">$0</h3>
+                                <span class="text-xs text-emerald-600 font-medium">All capital</span>
+                            </div>
+                        </div>
+
+                        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                            <div class="flex items-center justify-between">
+                                <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Expected Profit</p>
+                                <div class="rounded-xl bg-emerald-50 p-3 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                    <i class="fa-solid fa-chart-line-up text-lg"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-baseline space-x-2">
+                                <h3 id="stat-profit" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">$0</h3>
+                                <span class="text-xs text-slate-500 dark:text-slate-400">Net return</span>
+                            </div>
+                        </div>
+
+                        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                            <div class="flex items-center justify-between">
+                                <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Average ROI</p>
+                                <div class="rounded-xl bg-purple-50 p-3 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
+                                    <i class="fa-solid fa-percent text-lg"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-baseline space-x-2">
+                                <h3 id="stat-roi" class="text-2xl font-bold text-slate-900 dark:text-white">0%</h3>
+                                <span class="text-xs text-purple-600 font-medium">Yield avg</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        <!-- Investment vs Expected Return -->
+                        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-bold text-slate-800 dark:text-white">Investment vs Expected Return</h3>
+                                <span class="text-xs text-slate-500 dark:text-slate-400">By Project</span>
+                            </div>
+                            <div class="h-72 relative">
+                                <canvas id="chartInvestmentReturn"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Profit Distribution -->
+                        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-bold text-slate-800 dark:text-white">Estimated Profit per Project</h3>
+                                <span class="text-xs text-slate-500 dark:text-slate-400">Net Earnings</span>
+                            </div>
+                            <div class="h-72 relative">
+                                <canvas id="chartProfit"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Projects Quick Table -->
+                    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-slate-800 dark:text-white">Active Portfolio Overview</h3>
+                            <button onclick="switchTab('projects')" class="text-sm font-semibold text-brand-600 hover:text-brand-500">View All</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="border-b border-slate-200 text-xs uppercase tracking-wider text-slate-400 dark:border-slate-800">
+                                    <tr>
+                                        <th class="pb-3 font-semibold">Project Name</th>
+                                        <th class="pb-3 font-semibold">Location</th>
+                                        <th class="pb-3 font-semibold">Investment</th>
+                                        <th class="pb-3 font-semibold">Expected Value</th>
+                                        <th class="pb-3 font-semibold">Est. Profit</th>
+                                        <th class="pb-3 font-semibold">ROI</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboard-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. PROJECT MANAGER TAB -->
+                <div id="tab-projects" class="tab-content space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Project Manager</h2>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">Manage, edit and review all your real estate developments and acquisitions.</p>
+                        </div>
+                        <button onclick="openProjectModal()" class="inline-flex items-center justify-center space-x-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 hover:bg-brand-500 transition-all">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add New Project</span>
+                        </button>
+                    </div>
+
+                    <!-- Project Cards Grid -->
+                    <div id="projects-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        <!-- Dynamic Project Cards -->
+                    </div>
+                </div>
+
+                <!-- 3. PLOT CALCULATOR TAB -->
+                <div id="tab-plot-calc" class="tab-content space-y-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Plot & Land Calculator</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Calculate total plot area across standard and irregular boundary dimensions.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        <!-- Input Form -->
+                        <div class="lg:col-span-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-4">
+                            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                                <span class="font-semibold text-sm">Calculation Mode</span>
+                                <div class="flex space-x-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-medium">
+                                    <button onclick="setPlotMode('rectangular')" id="btn-mode-rect" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm transition-all">Rectangular</button>
+                                    <button onclick="setPlotMode('irregular')" id="btn-mode-irreg" class="px-3 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 transition-all">Irregular (4-Side)</button>
+                                </div>
+                            </div>
+
+                            <!-- Rectangular Inputs -->
+                            <div id="plot-rect-inputs" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Plot Length</label>
+                                    <div class="flex rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                        <input type="number" id="plot-length" value="50" oninput="calculatePlot()" class="w-full px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                                        <select id="plot-length-unit" onchange="calculatePlot()" class="bg-slate-100 dark:bg-slate-800 px-3 text-xs font-medium border-l border-slate-200 dark:border-slate-700 focus:outline-none">
+                                            <option value="ft">Feet</option>
+                                            <option value="yd">Yards</option>
+                                            <option value="m">Meters</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Plot Width</label>
+                                    <div class="flex rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                        <input type="number" id="plot-width" value="30" oninput="calculatePlot()" class="w-full px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                                        <select id="plot-width-unit" onchange="calculatePlot()" class="bg-slate-100 dark:bg-slate-800 px-3 text-xs font-medium border-l border-slate-200 dark:border-slate-700 focus:outline-none">
+                                            <option value="ft">Feet</option>
+                                            <option value="yd">Yards</option>
+                                            <option value="m">Meters</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Irregular Inputs -->
+                            <div id="plot-irreg-inputs" class="space-y-3 hidden">
+                                <p class="text-xs text-slate-500">Enter opposite sides (in Feet) for averaged quadrilateral formula (Brahmagupta/Trapezoidal approximation).</p>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Side A (Front Length - ft)</label>
+                                    <input type="number" id="plot-side-a" value="50" oninput="calculatePlot()" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Side B (Back Length - ft)</label>
+                                    <input type="number" id="plot-side-b" value="45" oninput="calculatePlot()" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Side C (Left Width - ft)</label>
+                                    <input type="number" id="plot-side-c" value="30" oninput="calculatePlot()" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Side D (Right Width - ft)</label>
+                                    <input type="number" id="plot-side-d" value="32" oninput="calculatePlot()" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                                </div>
+                            </div>
+
+                            <button onclick="transferPlotToConstruction()" class="w-full rounded-xl bg-slate-900 dark:bg-slate-800 text-white py-3 text-sm font-semibold hover:bg-slate-800 dark:hover:bg-slate-700 transition-all flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <span>Use Area in Construction Calc</span>
+                            </button>
+                        </div>
+
+                        <!-- Results Card -->
+                        <div class="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-base font-bold text-slate-800 dark:text-white mb-4">Calculated Plot Area Conversions</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-5 border border-slate-100 dark:border-slate-800">
+                                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Square Feet (Sq Ft)</p>
+                                        <h4 id="res-sqft" class="text-2xl font-extrabold text-brand-600 dark:text-brand-400 mt-2">1,500</h4>
+                                        <span class="text-[10px] text-slate-400">1 sq ft = 1 sq ft</span>
+                                    </div>
+                                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-5 border border-slate-100 dark:border-slate-800">
+                                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Square Yards (Gaj / Sq Yd)</p>
+                                        <h4 id="res-sqyd" class="text-2xl font-extrabold text-slate-900 dark:text-white mt-2">166.67</h4>
+                                        <span class="text-[10px] text-slate-400">1 sq yd = 9 sq ft</span>
+                                    </div>
+                                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-5 border border-slate-100 dark:border-slate-800">
+                                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Square Meters (Sq M)</p>
+                                        <h4 id="res-sqm" class="text-2xl font-extrabold text-slate-900 dark:text-white mt-2">139.35</h4>
+                                        <span class="text-[10px] text-slate-400">1 sq m = 10.764 sq ft</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-8 rounded-xl bg-brand-50 dark:bg-brand-900/20 p-4 border border-brand-100 dark:border-brand-900/30 flex items-start space-x-3">
+                                <i class="fa-solid fa-lightbulb text-brand-600 dark:text-brand-400 mt-0.5"></i>
+                                <div class="text-xs text-brand-900 dark:text-brand-200">
+                                    <span class="font-bold">Pro Tip:</span> Standard setbacks usually require leaving 15-25% of the plot area open as per local zoning laws. Keep this in mind when calculating built-up coverage.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. CONSTRUCTION CALCULATOR TAB -->
+                <div id="tab-construction-calc" class="tab-content space-y-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Construction Cost Estimator</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Estimate detailed material, labor, and finishing expenses based on build quality.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        <!-- Inputs -->
+                        <div class="lg:col-span-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Built-Up Area (Sq Ft)</label>
+                                <input type="number" id="const-area" value="1200" oninput="calculateConstruction()" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Construction Quality</label>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button onclick="setQuality('basic')" id="q-basic" class="quality-btn py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold transition-all">Basic ($35/sqft)</button>
+                                    <button onclick="setQuality('standard')" id="q-standard" class="quality-btn py-2.5 rounded-xl border-2 border-brand-600 bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400 text-xs font-semibold transition-all">Standard ($55/sqft)</button>
+                                    <button onclick="setQuality('premium')" id="q-premium" class="quality-btn py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold transition-all">Premium ($85/sqft)</button>
+                                </div>
+                            </div>
+
+                            <button onclick="transferConstToInvestment()" class="w-full rounded-xl bg-slate-900 dark:bg-slate-800 text-white py-3 text-sm font-semibold hover:bg-slate-800 dark:hover:bg-slate-700 transition-all flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-arrow-right"></i>
+                                <span>Use Cost in Investment Calc</span>
+                            </button>
+                        </div>
+
+                        <!-- Results & Breakdown -->
+                        <div class="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between space-y-6">
+                            <div>
+                                <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+                                    <div>
+                                        <p class="text-xs font-medium text-slate-500">Total Estimated Cost</p>
+                                        <h3 id="const-total-cost" class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">$66,000</h3>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xs font-medium text-slate-500">Rate per Sq Ft</p>
+                                        <h4 id="const-rate-display" class="text-lg font-bold text-brand-600 mt-1">$55 / sq ft</h4>
+                                    </div>
+                                </div>
+
+                                <div class="mt-6 space-y-4">
+                                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Expense Breakdown</h4>
+                                    
+                                    <!-- Material Cost -->
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-1">
+                                            <span class="font-medium text-slate-700 dark:text-slate-300">Material Cost (Steel, Cement, Bricks, Tiles) ~ 55%</span>
+                                            <span id="const-mat-val" class="font-bold">$36,300</span>
+                                        </div>
+                                        <div class="h-2 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                                            <div id="bar-mat" class="h-full bg-brand-600 rounded-full" style="width: 55%"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Labour Cost -->
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-1">
+                                            <span class="font-medium text-slate-700 dark:text-slate-300">Labour & Contractor Charges ~ 35%</span>
+                                            <span id="const-labour-val" class="font-bold">$23,100</span>
+                                        </div>
+                                        <div class="h-2 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                                            <div id="bar-labour" class="h-full bg-blue-500 rounded-full" style="width: 35%"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Other Expenses -->
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-1">
+                                            <span class="font-medium text-slate-700 dark:text-slate-300">Approvals, Architect & Contingency ~ 10%</span>
+                                            <span id="const-other-val" class="font-bold">$6,600</span>
+                                        </div>
+                                        <div class="h-2 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                                            <div id="bar-other" class="h-full bg-purple-500 rounded-full" style="width: 10%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. PROPERTY INVESTMENT CALCULATOR TAB -->
+                <div id="tab-investment-calc" class="tab-content space-y-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Property Investment & ROI Calculator</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Calculate total investment outlay, resale projections, net profit, and ROI percentage.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        <!-- Inputs -->
+                        <div class="lg:col-span-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Property Purchase Price ($)</label>
+                                <input type="number" id="inv-purchase" value="150000" oninput="calculateInvestment()" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Registration & Stamp Duty ($)</label>
+                                <input type="number" id="inv-stamp" value="10500" oninput="calculateInvestment()" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Renovation / Construction Cost ($)</label>
+                                <input type="number" id="inv-reno" value="66000" oninput="calculateInvestment()" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Expected Selling Price ($)</label>
+                                <input type="number" id="inv-selling" value="280000" oninput="calculateInvestment()" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                            </div>
+                        </div>
+
+                        <!-- Results Card -->
+                        <div class="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between space-y-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-5 border border-slate-100 dark:border-slate-800">
+                                    <p class="text-xs font-medium text-slate-500">Total Capital Invested</p>
+                                    <h4 id="res-total-inv" class="text-2xl font-bold text-slate-900 dark:text-white mt-2">$226,500</h4>
+                                    <span class="text-[10px] text-slate-400">Purchase + Stamp + Reno</span>
+                                </div>
+                                <div class="rounded-xl bg-emerald-50 dark:bg-emerald-900/20 p-5 border border-emerald-100 dark:border-emerald-900/30">
+                                    <p class="text-xs font-medium text-emerald-700 dark:text-emerald-400">Estimated Net Profit</p>
+                                    <h4 id="res-net-profit" class="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-2">$53,500</h4>
+                                    <span class="text-[10px] text-emerald-600/70">Expected Sale - Total Inv</span>
+                                </div>
+                                <div class="rounded-xl bg-purple-50 dark:bg-purple-900/20 p-5 border border-purple-100 dark:border-purple-900/30">
+                                    <p class="text-xs font-medium text-purple-700 dark:text-purple-400">Return on Investment (ROI)</p>
+                                    <h4 id="res-roi-pct" class="text-2xl font-extrabold text-purple-600 dark:text-purple-400 mt-2">23.6%</h4>
+                                    <span class="text-[10px] text-purple-600/70">(Profit / Investment) * 100</span>
+                                </div>
+                            </div>
+
+                            <div class="rounded-xl bg-slate-900 text-white p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <div>
+                                    <h4 class="font-bold text-base">Save this Investment as a New Project</h4>
+                                    <p class="text-xs text-slate-400 mt-1">Add this calculation straight into your active portfolio tracker.</p>
+                                </div>
+                                <button onclick="quickSaveFromInvestment()" class="rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold hover:bg-brand-500 transition-all shadow-lg shadow-brand-500/20 whitespace-nowrap">
+                                    <i class="fa-solid fa-floppy-disk mr-2"></i> Save to Projects
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. RENTAL CALCULATOR TAB -->
+                <div id="tab-rental-calc" class="tab-content space-y-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Rental Yield Calculator</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Calculate annual rental income and gross rental yield percentage.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        <!-- Inputs -->
+                        <div class="lg:col-span-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Total Property Value ($)</label>
+                                <input type="number" id="rent-prop-val" value="226500" oninput="calculateRental()" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Monthly Rental Income ($)</label>
+                                <input type="number" id="rent-monthly" value="1500" oninput="calculateRental()" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                            </div>
+                        </div>
+
+                        <!-- Results -->
+                        <div class="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between space-y-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-5 border border-slate-100 dark:border-slate-800">
+                                    <p class="text-xs font-medium text-slate-500">Annual Rental Income</p>
+                                    <h4 id="res-annual-rent" class="text-2xl font-bold text-slate-900 dark:text-white mt-2">$18,000</h4>
+                                    <span class="text-[10px] text-slate-400">Monthly x 12</span>
+                                </div>
+                                <div class="rounded-xl bg-brand-50 dark:bg-brand-900/20 p-5 border border-brand-100 dark:border-brand-900/30">
+                                    <p class="text-xs font-medium text-brand-700 dark:text-brand-400">Gross Rental Yield</p>
+                                    <h4 id="res-rental-yield" class="text-2xl font-extrabold text-brand-600 dark:text-brand-400 mt-2">7.95%</h4>
+                                    <span class="text-[10px] text-brand-600/70">(Annual Rent / Property Value) * 100</span>
+                                </div>
+                                <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-5 border border-slate-100 dark:border-slate-800">
+                                    <p class="text-xs font-medium text-slate-500">Monthly Cashflow Status</p>
+                                    <h4 class="text-2xl font-bold text-emerald-600 mt-2">Positive</h4>
+                                    <span class="text-[10px] text-slate-400">Strong rental market</span>
+                                </div>
+                            </div>
+
+                            <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-4 border border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400">
+                                <span class="font-bold">Real Estate Benchmark:</span> A gross rental yield between 6% to 10% is generally considered strong for residential properties.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Project Add/Edit Modal -->
+    <div id="project-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4 overflow-y-auto">
+        <div class="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-6 space-y-6">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                <h3 id="modal-title" class="text-lg font-bold text-slate-900 dark:text-white">Add New Project</h3>
+                <button onclick="closeProjectModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="project-form" onsubmit="saveProject(event)" class="space-y-4">
+                <input type="hidden" id="modal-project-id">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Project Name</label>
+                    <input type="text" id="modal-name" required placeholder="e.g., Downtown Commercial Villa" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Location / City</label>
+                    <input type="text" id="modal-location" required placeholder="e.g., Austin, TX" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Total Investment ($)</label>
+                        <input type="number" id="modal-investment" required placeholder="226500" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Expected Selling Price ($)</label>
+                        <input type="number" id="modal-selling" required placeholder="280000" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 bg-transparent text-sm focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <button type="button" onclick="closeProjectModal()" class="rounded-xl px-4 py-2.5 text-sm font-semibold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">Cancel</button>
+                    <button type="submit" class="rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-500 shadow-lg shadow-brand-500/20 transition-all">Save Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- State & Sample Data ---
+        let projects = [
+            { id: '1', name: 'Oakridge Luxury Duplex', location: 'Austin, TX', investment: 226500, selling: 280000 },
+            { id: '2', name: 'Sunset Boulevard Plot', location: 'Miami, FL', investment: 120000, selling: 155000 },
+            { id: '3', name: 'Metro Commercial Plaza', location: 'Dallas, TX', investment: 450000, selling: 580000 }
+        ];
+
+        let charts = {};
+
+        // --- Navigation & UI Handlers ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-50', 'text-brand-700', 'dark:bg-brand-900/30', 'dark:text-brand-400');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-100', 'dark:text-slate-300', 'dark:hover:bg-slate-800/60');
+            });
+
+            const targetTab = document.getElementById(`tab-${tabId}`);
+            if (targetTab) targetTab.classList.add('active');
+
+            const activeBtn = document.querySelector(`[data-target="${tabId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100', 'dark:text-slate-300', 'dark:hover:bg-slate-800/60');
+                activeBtn.classList.add('bg-brand-50', 'text-brand-700', 'dark:bg-brand-900/30', 'dark:text-brand-400');
+            }
+
+            const titles = {
+                'dashboard': 'Dashboard Overview',
+                'projects': 'Project Manager',
+                'plot-calc': 'Plot & Land Calculator',
+                'construction-calc': 'Construction Cost Estimator',
+                'investment-calc': 'Property Investment Calculator',
+                'rental-calc': 'Rental Yield Calculator'
+            };
+            document.getElementById('page-title').innerText = titles[tabId] || 'Real Estate Suite';
+
+            if (tabId === 'dashboard') {
+                updateDashboard();
+            } else if (tabId === 'projects') {
+                renderProjects();
+            }
+
+            // Close sidebar on mobile after click
+            if (window.innerWidth < 1024) {
+                document.getElementById('sidebar').classList.add('-translate-x-full');
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const icon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                icon.className = 'fa-solid fa-moon';
+            }
+            updateCharts();
+        }
+
+        // --- 1. Plot Calculator Logic ---
+        let plotMode = 'rectangular';
+        function setPlotMode(mode) {
+            plotMode = mode;
+            const rectInputs = document.getElementById('plot-rect-inputs');
+            const irregInputs = document.getElementById('plot-irreg-inputs');
+            const btnRect = document.getElementById('btn-mode-rect');
+            const btnIrreg = document.getElementById('btn-mode-irreg');
+
+            if (mode === 'rectangular') {
+                rectInputs.classList.remove('hidden');
+                irregInputs.classList.add('hidden');
+                btnRect.className = "px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm transition-all";
+                btnIrreg.className = "px-3 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 transition-all";
+            } else {
+                rectInputs.classList.add('hidden');
+                irregInputs.classList.remove('hidden');
+                btnIrreg.className = "px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm transition-all";
+                btnRect.className = "px-3 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 transition-all";
+            }
+            calculatePlot();
+        }
+
+        function calculatePlot() {
+            let sqft = 0;
+            if (plotMode === 'rectangular') {
+                let len = parseFloat(document.getElementById('plot-length').value) || 0;
+                let lUnit = document.getElementById('plot-length-unit').value;
+                let wid = parseFloat(document.getElementById('plot-width').value) || 0;
+                let wUnit = document.getElementById('plot-width-unit').value;
+
+                // convert to feet
+                if (lUnit === 'yd') len *= 3;
+                else if (lUnit === 'm') len *= 3.28084;
+
+                if (wUnit === 'yd') wid *= 3;
+                else if (wUnit === 'm') wid *= 3.28084;
+
+                sqft = len * wid;
+            } else {
+                let a = parseFloat(document.getElementById('plot-side-a').value) || 0;
+                let b = parseFloat(document.getElementById('plot-side-b').value) || 0;
+                let c = parseFloat(document.getElementById('plot-side-c').value) || 0;
+                let d = parseFloat(document.getElementById('plot-side-d').value) || 0;
+                // Brahmagupta / average quadrilateral approximation: avg length * avg width
+                let avgLen = (a + b) / 2;
+                let avgWid = (c + d) / 2;
+                sqft = avgLen * avgWid;
+            }
+
+            let sqyd = sqft / 9;
+            let sqm = sqft / 10.7639;
+
+            document.getElementById('res-sqft').innerText = sqft.toLocaleString('en-US', {maximumFractionDigits: 2});
+            document.getElementById('res-sqyd').innerText = sqyd.toLocaleString('en-US', {maximumFractionDigits: 2});
+            document.getElementById('res-sqm').innerText = sqm.toLocaleString('en-US', {maximumFractionDigits: 2});
+        }
+
+        function transferPlotToConstruction() {
+            let sqftText = document.getElementById('res-sqft').innerText.replace(/,/g, '');
+            document.getElementById('const-area').value = Math.round(parseFloat(sqftText) || 1200);
+            switchTab('construction-calc');
+            calculateConstruction();
+        }
+
+        // --- 2. Construction Calculator Logic ---
+        let qualityRates = { basic: 35, standard: 55, premium: 85 };
+        let currentQuality = 'standard';
+
+        function setQuality(quality) {
+            currentQuality = quality;
+            document.querySelectorAll('.quality-btn').forEach(btn => {
+                btn.className = "quality-btn py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold transition-all";
+            });
+            const activeBtn = document.getElementById(`q-${quality}`);
+            activeBtn.className = "quality-btn py-2.5 rounded-xl border-2 border-brand-600 bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400 text-xs font-semibold transition-all";
+            calculateConstruction();
+        }
+
+        function calculateConstruction() {
+            let area = parseFloat(document.getElementById('const-area').value) || 0;
+            let rate = qualityRates[currentQuality];
+            let total = area * rate;
+
+            let material = total * 0.55;
+            let labour = total * 0.35;
+            let other = total * 0.10;
+
+            document.getElementById('const-total-cost').innerText = '$' + total.toLocaleString('en-US', {maximumFractionDigits: 0});
+            document.getElementById('const-rate-display').innerText = '$' + rate + ' / sq ft';
+            document.getElementById('const-mat-val').innerText = '$' + material.toLocaleString('en-US', {maximumFractionDigits: 0});
+            document.getElementById('const-labour-val').innerText = '$' + labour.toLocaleString('en-US', {maximumFractionDigits: 0});
+            document.getElementById('const-other-val').innerText = '$' + other.toLocaleString('en-US', {maximumFractionDigits: 0});
+        }
+
+        function transferConstToInvestment() {
+            let totalCostText = document.getElementById('const-total-cost').innerText.replace(/[\$,]/g, '');
+            document.getElementById('inv-reno').value = Math.round(parseFloat(totalCostText) || 0);
+            switchTab('investment-calc');
+            calculateInvestment();
+        }
+
+        // --- 3. Property Investment Calculator Logic ---
+        function calculateInvestment() {
+            let purchase = parseFloat(document.getElementById('inv-purchase').value) || 0;
+            let stamp = parseFloat(document.getElementById('inv-stamp').value) || 0;
+            let reno = parseFloat(document.getElementById('inv-reno').value) || 0;
+            let selling = parseFloat(document.getElementById('inv-selling').value) || 0;
+
+            let totalInv = purchase + stamp + reno;
+            let profit = selling - totalInv;
+            let roi = totalInv > 0 ? (profit / totalInv) * 100 : 0;
+
+            document.getElementById('res-total-inv').innerText = '$' + totalInv.toLocaleString('en-US', {maximumFractionDigits: 0});
+            document.getElementById('res-net-profit').innerText = '$' + profit.toLocaleString('en-US', {maximumFractionDigits: 0});
+            document.getElementById('res-roi-pct').innerText = roi.toFixed(1) + '%';
+        }
+
+        function quickSaveFromInvestment() {
+            let totalInv = parseFloat(document.getElementById('res-total-inv').innerText.replace(/[\$,]/g, '')) || 0;
+            let selling = parseFloat(document.getElementById('inv-selling').value) || 0;
+
+            document.getElementById('modal-project-id').value = '';
+            document.getElementById('modal-name').value = 'New Acquired Property';
+            document.getElementById('modal-location').value = 'Prime District';
+            document.getElementById('modal-investment').value = totalInv;
+            document.getElementById('modal-selling').value = selling;
+            document.getElementById('modal-title').innerText = 'Save Investment as Project';
+            document.getElementById('project-modal').classList.remove('hidden');
+        }
+
+        // --- 4. Rental Calculator Logic ---
+        function calculateRental() {
+            let propVal = parseFloat(document.getElementById('rent-prop-val').value) || 0;
+            let monthly = parseFloat(document.getElementById('rent-monthly').value) || 0;
+
+            let annual = monthly * 12;
+            let yieldPct = propVal > 0 ? (annual / propVal) * 100 : 0;
+
+            document.getElementById('res-annual-rent').innerText = '$' + annual.toLocaleString('en-US', {maximumFractionDigits: 0});
+            document.getElementById('res-rental-yield').innerText = yieldPct.toFixed(2) + '%';
+        }
+
+        // --- 5. Project Manager Logic ---
+        function renderProjects() {
+            const grid = document.getElementById('projects-grid');
+            grid.innerHTML = '';
+
+            projects.forEach(p => {
+                let profit = p.selling - p.investment;
+                let roi = p.investment > 0 ? (profit / p.investment) * 100 : 0;
+
+                grid.innerHTML += `
+                    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <h3 class="font-bold text-slate-900 dark:text-white text-base">${p.name}</h3>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i> ${p.location}</p>
+                                </div>
+                                <div class="flex space-x-1">
+                                    <button onclick="editProject('${p.id}')" class="h-8 w-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+                                        <i class="fa-solid fa-pen text-xs"></i>
+                                    </button>
+                                    <button onclick="deleteProject('${p.id}')" class="h-8 w-8 rounded-lg bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition-colors">
+                                        <i class="fa-solid fa-trash text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 py-3 border-y border-slate-100 dark:border-slate-800 text-xs">
+                            <div>
+                                <span class="text-slate-400 block">Total Investment</span>
+                                <span class="font-bold text-slate-800 dark:text-white text-sm">$${p.investment.toLocaleString()}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block">Expected Value</span>
+                                <span class="font-bold text-slate-800 dark:text-white text-sm">$${p.selling.toLocaleString()}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-slate-400">Est. Profit</span>
+                                <p class="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">+$${profit.toLocaleString()}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] uppercase font-bold text-slate-400">ROI Return</span>
+                                <p class="text-sm font-extrabold text-purple-600 dark:text-purple-400">${roi.toFixed(1)}%</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('project-badge').innerText = projects.length;
+        }
+
+        function openProjectModal() {
+            document.getElementById('modal-project-id').value = '';
+            document.getElementById('modal-name').value = '';
+            document.getElementById('modal-location').value = '';
+            document.getElementById('modal-investment').value = '';
+            document.getElementById('modal-selling').value = '';
+            document.getElementById('modal-title').innerText = 'Add New Project';
+            document.getElementById('project-modal').classList.remove('hidden');
+        }
+
+        function closeProjectModal() {
+            document.getElementById('project-modal').classList.add('hidden');
+        }
+
+        function saveProject(e) {
+            e.preventDefault();
+            let id = document.getElementById('modal-project-id').value;
+            let name = document.getElementById('modal-name').value;
+            let location = document.getElementById('modal-location').value;
+            let investment = parseFloat(document.getElementById('modal-investment').value) || 0;
+            let selling = parseFloat(document.getElementById('modal-selling').value) || 0;
+
+            if (id) {
+                let p = projects.find(item => item.id === id);
+                if (p) {
+                    p.name = name;
+                    p.location = location;
+                    p.investment = investment;
+                    p.selling = selling;
+                }
+            } else {
+                let newProj = {
+                    id: Date.now().toString(),
+                    name,
+                    location,
+                    investment,
+                    selling
+                };
+                projects.push(newProj);
+            }
+
+            closeProjectModal();
+            renderProjects();
+            updateDashboard();
+        }
+
+        function editProject(id) {
+            let p = projects.find(item => item.id === id);
+            if (!p) return;
+            document.getElementById('modal-project-id').value = p.id;
+            document.getElementById('modal-name').value = p.name;
+            document.getElementById('modal-location').value = p.location;
+            document.getElementById('modal-investment').value = p.investment;
+            document.getElementById('modal-selling').value = p.selling;
+            document.getElementById('modal-title').innerText = 'Edit Project';
+            document.getElementById('project-modal').classList.remove('hidden');
+        }
+
+        function deleteProject(id) {
+            projects = projects.filter(item => item.id !== id);
+            renderProjects();
+            updateDashboard();
+        }
+
+        // --- 6. Dashboard & Charts ---
+        function updateDashboard() {
+            let totalProj = projects.length;
+            let totalInv = projects.reduce((acc, curr) => acc + curr.investment, 0);
+            let totalSelling = projects.reduce((acc, curr) => acc + curr.selling, 0);
+            let totalProfit = totalSelling - totalInv;
+            let avgRoi = totalInv > 0 ? (totalProfit / totalInv) * 100 : 0;
+
+            document.getElementById('stat-projects').innerText = totalProj;
+            document.getElementById('stat-investment').innerText = '$' + totalInv.toLocaleString();
+            document.getElementById('stat-profit').innerText = '$' + totalProfit.toLocaleString();
+            document.getElementById('stat-roi').innerText = avgRoi.toFixed(1) + '%';
+
+            // Populate Table
+            const tbody = document.getElementById('dashboard-table-body');
+            tbody.innerHTML = '';
+            projects.slice(0, 5).forEach(p => {
+                let profit = p.selling - p.investment;
+                let roi = p.investment > 0 ? (profit / p.investment) * 100 : 0;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                        <td class="py-3 font-semibold text-slate-800 dark:text-white">${p.name}</td>
+                        <td class="py-3 text-slate-500">${p.location}</td>
+                        <td class="py-3 font-medium">$${p.investment.toLocaleString()}</td>
+                        <td class="py-3 font-medium">$${p.selling.toLocaleString()}</td>
+                        <td class="py-3 font-bold text-emerald-600">+$${profit.toLocaleString()}</td>
+                        <td class="py-3 font-bold text-purple-600">${roi.toFixed(1)}%</td>
+                    </tr>
+                `;
+            });
+
+            updateCharts();
+        }
+
+        function updateCharts() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#94a3b8' : '#64748b';
+            const gridColor = isDark ? '#1e293b' : '#f1f5f9';
+
+            let labels = projects.map(p => p.name.length > 15 ? p.name.substring(0, 15) + '...' : p.name);
+            let invData = projects.map(p => p.investment);
+            let returnData = projects.map(p => p.selling);
+            let profitData = projects.map(p => p.selling - p.investment);
+
+            // 1. Investment vs Return Chart
+            const ctx1 = document.getElementById('chartInvestmentReturn').getContext('2d');
+            if (charts.invReturn) charts.invReturn.destroy();
+            charts.invReturn = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Investment', data: invData, backgroundColor: '#cbd5e1', borderRadius: 6 },
+                        { label: 'Expected Return', data: returnData, backgroundColor: '#22c55e', borderRadius: 6 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: textColor, font: { family: 'Inter', size: 11 } } } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: textColor } },
+                        y: { grid: { color: gridColor }, ticks: { color: textColor } }
+                    }
+                }
+            });
+
+            // 2. Profit Chart
+            const ctx2 = document.getElementById('chartProfit').getContext('2d');
+            if (charts.profit) charts.profit.destroy();
+            charts.profit = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Net Profit ($)',
+                        data: profitData,
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#8b5cf6',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: textColor, font: { family: 'Inter', size: 11 } } } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: textColor } },
+                        y: { grid: { color: gridColor }, ticks: { color: textColor } }
+                    }
+                }
+            });
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            calculatePlot();
+            calculateConstruction();
+            calculateInvestment();
+            calculateRental();
+            updateDashboard();
+        };
+    </script>
+</body>
+</html>
